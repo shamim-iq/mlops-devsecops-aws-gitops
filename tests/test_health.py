@@ -21,9 +21,9 @@ def test_predict_returns_prediction() -> None:
 
     assert response.status_code == 200
     body = response.json()
-    assert body["prediction"] == 1
-    assert body["model_version"] == "baseline-0.1.0"
-    assert body["score"] == 0.8
+    assert body["prediction"] in [0, 1, 2]
+    assert body["model_version"] == "iris-logreg-0.1.0"
+    assert 0.0 <= body["score"] <= 1.0
 
 
 def test_metrics_exposes_prometheus_output() -> None:
