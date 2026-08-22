@@ -10,6 +10,8 @@ jobs:
   app:
     name: Test, scan, and build
     runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: ${{ github.workspace }}
 
     steps:
       - name: Checkout
