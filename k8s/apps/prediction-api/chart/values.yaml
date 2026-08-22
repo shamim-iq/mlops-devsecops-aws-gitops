@@ -1,0 +1,51 @@
+namespace:
+  name: prediction-api
+
+labels:
+  partOf: mlops-devsecops-demo
+
+image:
+  repository: prediction-api
+  tag: local
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8000
+
+rollout:
+  replicas: 1
+  revisionHistoryLimit: 2
+  canaryWeight: 20
+  pauseDuration: 60s
+
+probes:
+  path: /health
+  readiness:
+    initialDelaySeconds: 5
+    periodSeconds: 10
+  liveness:
+    initialDelaySeconds: 15
+    periodSeconds: 20
+
+metrics:
+  path: /metrics
+  port: "8000"
+
+analysis:
+  name: prediction-api-success-rate
+  metricName: prediction-success-rate
+  interval: 30s
+  count: 2
+  successRateThreshold: "0.95"
+  failureLimit: 1
+  prometheusAddress: http://prometheus-server.monitoring.svc.cluster.local
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
