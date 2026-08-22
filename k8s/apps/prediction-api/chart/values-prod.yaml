@@ -1,0 +1,3 @@
+image:
+  repository: <ecr-repository-uri>
+  tag: <image-tag>

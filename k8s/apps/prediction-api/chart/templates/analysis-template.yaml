@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: {{ .Values.analysis.name }}
+  namespace: {{ .Values.namespace.name }}
+spec:
+  metrics:
+    - name: {{ .Values.analysis.metricName }}
+      interval: {{ .Values.analysis.interval }}
+      count: {{ .Values.analysis.count }}
+      successCondition: result[0] >= {{ .Values.analysis.successRateThreshold }}
+      failureLimit: {{ .Values.analysis.failureLimit }}
+      provider:
+        prometheus:
+          address: {{ .Values.analysis.prometheusAddress }}
+          query: |
+            sum(rate(prediction_api_requests_total{status="200"}[1m]))
+            /
+            sum(rate(prediction_api_requests_total[1m]))

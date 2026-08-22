@@ -1,0 +1,55 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: {{ include "prediction-api.name" . }}
+  namespace: {{ .Values.namespace.name }}
+  labels:
+    {{- include "prediction-api.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.rollout.replicas }}
+  revisionHistoryLimit: {{ .Values.rollout.revisionHistoryLimit }}
+  selector:
+    matchLabels:
+      {{- include "prediction-api.selectorLabels" . | nindent 6 }}
+  strategy:
+    canary:
+      stableService: {{ include "prediction-api.name" . }}
+      steps:
+        - setWeight: {{ .Values.rollout.canaryWeight }}
+        - pause:
+            duration: {{ .Values.rollout.pauseDuration }}
+        - analysis:
+            templates:
+              - templateName: {{ .Values.analysis.name }}
+        - setWeight: 100
+  template:
+    metadata:
+      labels:
+        {{- include "prediction-api.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/part-of: {{ .Values.labels.partOf }}
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: {{ .Values.metrics.path }}
+        prometheus.io/port: {{ .Values.metrics.port | quote }}
+    spec:
+      containers:
+        - name: {{ include "prediction-api.name" . }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.targetPort }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.probes.path }}
+              port: http
+            initialDelaySeconds: {{ .Values.probes.readiness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probes.readiness.periodSeconds }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.probes.path }}
+              port: http
+            initialDelaySeconds: {{ .Values.probes.liveness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probes.liveness.periodSeconds }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
