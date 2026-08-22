@@ -11,9 +11,11 @@ Create a virtual environment, install dependencies, and run tests.
 ```bash
 python -m venv .venv
 source .venv/Scripts/activate
-pip install -r requirements.txt
+pip install -r requirements-dev.txt
 python scripts/train_model.py
 pytest
+ruff check app scripts tests
+pip-audit -r requirements-dev.txt
 ```
 
 Run the API locally.

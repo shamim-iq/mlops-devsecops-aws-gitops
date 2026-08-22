@@ -20,7 +20,10 @@ def train() -> dict[str, object]:
     pipeline = Pipeline(
         steps=[
             ("scaler", StandardScaler()),
-            ("classifier", LogisticRegression(max_iter=200, random_state=42, solver="liblinear")),
+            (
+                "classifier",
+                LogisticRegression(max_iter=200, random_state=42, solver="liblinear"),
+            ),
         ]
     )
     pipeline.fit(features, iris.target)
