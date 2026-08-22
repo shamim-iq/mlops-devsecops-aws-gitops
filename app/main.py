@@ -1,6 +1,6 @@
 import pickle
-from time import perf_counter
 from pathlib import Path
+from time import perf_counter
 
 from fastapi import FastAPI
 from prometheus_client import CONTENT_TYPE_LATEST, Counter, Histogram, generate_latest
@@ -59,7 +59,11 @@ def predict(payload: PredictionRequest) -> PredictionResponse:
     score = float(max(probabilities))
     PREDICTION_LATENCY.observe(perf_counter() - started)
     REQUEST_COUNT.labels(endpoint="/predict", method="POST", status="200").inc()
-    return PredictionResponse(prediction=prediction, score=round(score, 4), model_version=MODEL_VERSION)
+    return PredictionResponse(
+        prediction=prediction,
+        score=round(score, 4),
+        model_version=MODEL_VERSION,
+    )
 
 
 @app.get("/metrics")
