@@ -4,6 +4,11 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
+variable "aws_profile" {
+  description = "Local AWS CLI profile used by Terraform."
+  type        = string
+}
+
 variable "project_name" {
   description = "Name used for demo resource naming."
   type        = string
@@ -24,11 +29,21 @@ variable "vpc_cidr" {
 variable "public_subnet_cidrs" {
   description = "CIDR blocks for public subnets."
   type        = list(string)
+
+  validation {
+    condition     = length(var.public_subnet_cidrs) >= 2
+    error_message = "At least two public subnet CIDR blocks are required for the demo VPC."
+  }
 }
 
 variable "private_subnet_cidrs" {
   description = "CIDR blocks for private subnets."
   type        = list(string)
+
+  validation {
+    condition     = length(var.private_subnet_cidrs) >= 2
+    error_message = "At least two private subnet CIDR blocks are required for EKS."
+  }
 }
 
 variable "ecr_repository_name" {
@@ -45,6 +60,14 @@ variable "eks_node_instance_types" {
   description = "CPU-only EKS managed node group instance types."
   type        = list(string)
   default     = ["t3.medium"]
+
+  validation {
+    condition = alltrue([
+      for instance_type in var.eks_node_instance_types :
+      length(regexall("^(g|p|inf|trn|dl)[0-9a-z]*\\.", lower(instance_type))) == 0
+    ])
+    error_message = "EKS worker node instance types must be CPU-only."
+  }
 }
 
 variable "eks_node_desired_size" {
@@ -68,6 +91,12 @@ variable "eks_node_max_size" {
 variable "github_repository" {
   description = "GitHub repository allowed to assume CI/CD roles, in owner/name form."
   type        = string
+}
+
+variable "secret_names" {
+  description = "Secrets Manager secret names to create as empty containers for runtime or deployment values."
+  type        = list(string)
+  default     = ["prediction-api/runtime"]
 }
 
 variable "tags" {

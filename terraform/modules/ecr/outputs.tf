@@ -1,9 +1,9 @@
 output "repository_arn" {
   description = "ECR repository ARN."
-  value       = null
+  value       = aws_ecr_repository.this.arn
 }
 
 output "repository_url" {
   description = "ECR repository URL."
-  value       = null
+  value       = aws_ecr_repository.this.repository_url
 }

@@ -22,3 +22,18 @@ output "ci_role_arn" {
   description = "IAM role ARN for GitHub Actions CI."
   value       = module.iam.ci_role_arn
 }
+
+output "cd_role_arn" {
+  description = "IAM role ARN for GitHub Actions CD."
+  value       = module.iam.cd_role_arn
+}
+
+output "eks_oidc_provider_arn" {
+  description = "EKS IAM OIDC provider ARN for workload identity."
+  value       = module.eks.oidc_provider_arn
+}
+
+output "secret_arns" {
+  description = "Secrets Manager secret ARNs created for the demo."
+  value       = module.secrets.secret_arns
+}

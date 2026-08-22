@@ -3,9 +3,24 @@ variable "cluster_name" {
   type        = string
 }
 
+variable "cluster_role_arn" {
+  description = "IAM role ARN used by the EKS control plane."
+  type        = string
+}
+
+variable "cluster_security_group_ids" {
+  description = "Additional security group IDs attached to the EKS cluster."
+  type        = list(string)
+}
+
 variable "subnet_ids" {
   description = "Subnet IDs used by EKS."
   type        = list(string)
+}
+
+variable "node_role_arn" {
+  description = "IAM role ARN used by the EKS managed node group."
+  type        = string
 }
 
 variable "node_instance_types" {
