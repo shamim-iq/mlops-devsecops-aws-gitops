@@ -14,6 +14,11 @@ spec:
         prometheus:
           address: {{ .Values.analysis.prometheusAddress }}
           query: |
-            sum(rate(prediction_api_requests_total{status="200"}[1m]))
+            (
+              sum(rate(prediction_api_requests_total{status="200"}[1m])) or vector(0)
+            )
             /
-            sum(rate(prediction_api_requests_total[1m]))
+            clamp_min(
+              sum(rate(prediction_api_requests_total[1m])) or vector(0),
+              1
+            )
