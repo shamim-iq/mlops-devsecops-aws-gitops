@@ -12,6 +12,7 @@ Create a virtual environment, install dependencies, and run tests.
 python -m venv .venv
 source .venv/Scripts/activate
 pip install -r requirements.txt
+python scripts/train_model.py
 pytest
 ```
 
