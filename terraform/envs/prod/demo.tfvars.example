@@ -1,0 +1,18 @@
+aws_region = "us-east-1"
+
+project_name = "minimal-mlops-devsecops-pipeline"
+environment  = "demo"
+
+vpc_cidr             = "10.40.0.0/16"
+public_subnet_cidrs  = ["10.40.0.0/24", "10.40.1.0/24"]
+private_subnet_cidrs = ["10.40.10.0/24", "10.40.11.0/24"]
+
+ecr_repository_name = "prediction-api"
+eks_cluster_name    = "minimal-mlops-devsecops-demo"
+
+eks_node_instance_types = ["t3.medium"]
+eks_node_desired_size   = 1
+eks_node_min_size       = 1
+eks_node_max_size       = 1
+
+github_repository = "<github-owner>/<github-repository>"
