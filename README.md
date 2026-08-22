@@ -32,6 +32,8 @@ POST /predict
 GET /metrics
 ```
 
+Application behavior, model training, and inference flow are explained in [docs/app-functionality.md](docs/app-functionality.md).
+
 ## Repository Layout
 
 ```text
