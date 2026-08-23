@@ -30,7 +30,7 @@ jobs:
         run: pytest
 
       - name: Run linting
-        run: ruff check app scripts tests
+        run: ruff check app scripts tests topology
 
       - name: Run dependency audit
         run: pip-audit -r requirements-dev.txt
