@@ -14,4 +14,4 @@ spec:
         prometheus:
           address: {{ .Values.analysis.prometheusAddress }}
           query: |
-            sum(rate(prediction_api_requests_total[1m])) or vector(0)
+            sum(prediction_api_requests_total) or vector(0)
