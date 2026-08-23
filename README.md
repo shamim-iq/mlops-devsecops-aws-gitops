@@ -41,6 +41,7 @@ app/          FastAPI prediction service
 tests/        API tests
 terraform/    AWS infrastructure as code
 k8s/          Kubernetes desired state for Argo CD
+topology/     Read-only kubectl-based topology report generator
 .github/      GitHub Actions workflows
 docs/         project notes
 ```

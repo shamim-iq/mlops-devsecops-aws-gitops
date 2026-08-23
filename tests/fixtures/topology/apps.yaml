@@ -1,0 +1,5 @@
+apps:
+  - name: prediction-api
+    namespace: prediction-api
+    selector:
+      app.kubernetes.io/name: prediction-api
