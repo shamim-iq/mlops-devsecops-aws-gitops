@@ -38,7 +38,7 @@ analysis:
   metricName: prediction-request-volume
   interval: 30s
   count: 2
-  minRequestRate: "999999"
+  minRequestRate: "0"
   failureLimit: 1
   prometheusAddress: http://prometheus-server.monitoring.svc.cluster.local
 
