@@ -52,7 +52,7 @@ def discover_from_cluster(app: AppConfig) -> TopologyGraph:
     _add_rollouts(graph, rollouts)
 
     for pod in pods:
-        pod_id = _node_id("Pod", pod.metadata.name)
+        pod_id = _node_id("Pod", _metadata(pod)["name"])
         graph.add_edge("selector", pod_id, "matches")
         _add_pod_references(graph, pod)
 
