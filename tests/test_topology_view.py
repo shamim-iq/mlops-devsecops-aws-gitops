@@ -1,7 +1,8 @@
 import pytest
 
 from topology.topology_view.config import AppConfig, load_app_config
-from topology.topology_view.discover import build_static_graph, selector_to_label_selector
+from topology.topology_view import discover
+from topology.topology_view.discover import build_static_graph, discover_from_cluster, selector_to_label_selector
 from topology.topology_view.graph import TopologyGraph, render_mermaid
 from topology.topology_view.render_markdown import render_report
 
@@ -54,3 +55,41 @@ def test_render_report_includes_graph_and_detail_tables() -> None:
     assert "```mermaid" in report
     assert "## Application" in report
     assert "| name | namespace |" in report
+
+
+def test_discover_from_cluster_accepts_kubectl_json_dicts(monkeypatch: pytest.MonkeyPatch) -> None:
+    app = AppConfig(
+        name="prediction-api",
+        namespace="prediction-api",
+        selector={"app.kubernetes.io/name": "prediction-api"},
+    )
+
+    def fake_kubectl_items(namespace: str, resource: str, label_selector: str | None = None) -> list[dict]:
+        assert namespace == "prediction-api"
+        if resource == "pods":
+            assert label_selector == "app.kubernetes.io/name=prediction-api"
+            return [
+                {
+                    "metadata": {
+                        "name": "prediction-api-abc",
+                        "labels": {"app.kubernetes.io/name": "prediction-api"},
+                    },
+                    "spec": {"containers": [{}]},
+                }
+            ]
+        if resource == "services":
+            return [
+                {
+                    "metadata": {"name": "prediction-api"},
+                    "spec": {"selector": {"app.kubernetes.io/name": "prediction-api"}},
+                }
+            ]
+        return []
+
+    monkeypatch.setattr(discover, "_kubectl_items", fake_kubectl_items)
+
+    graph = discover_from_cluster(app)
+
+    assert "Pod:prediction-api-abc" in graph.nodes
+    assert any(edge.source == "selector" and edge.target == "Pod:prediction-api-abc" for edge in graph.edges)
+    assert any(edge.source == "Service:prediction-api" and edge.target == "Pod:prediction-api-abc" for edge in graph.edges)
